@@ -12,12 +12,6 @@ test.beforeEach(async ({ page }) => {
   // Navigating to the application URL
   await page.goto('https://conduit.bondaracademy.com/');
 
-  // Login to the application before each test
-  await page.getByText('Sign in').click();
-  await page.getByRole('textbox', { name: 'Email' }).fill('bane1manojlovic@gmail.com');
-  await page.getByRole('textbox', { name: 'Password' }).fill('Test123!');
-  await page.getByRole('button', { name: 'Sign in' }).click();
-
 });
 
 test.afterEach(async ({ page }) => {
