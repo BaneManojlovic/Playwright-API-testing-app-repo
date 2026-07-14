@@ -87,3 +87,50 @@ test('delete article', async ({ page, request }) => {
   // Verify that the article is deleted by checking that it no longer appears in the list
   await expect(page.locator('app-article-list h1').first()).not.toContainText('This is a test title');
 });
+
+
+test('create article', async ({ page, request }) => {
+  // To open the create new article page
+  await page.getByText('New Article').click();
+  // Fill in the article details
+  await page.getByRole('textbox', { name: 'Article Title' }).fill('Playwright is awesome');
+  await page.getByRole('textbox', { name: 'What\'s this article about?' }).fill('About the Playwright');
+  await page.getByRole('textbox', { name: 'Write your article (in markdown)' }).fill('We like to use Playwright for autoamation.');
+  await page.getByRole('textbox', { name: 'Enter tags' }).fill('playwright');
+  // Click the "Publish Article" button to create-publish the article
+  await page.getByRole('button', { name: 'Publish Article' }).click();
+
+  // Wait for the article page to load after publishing
+  const articleResponse = await page.waitForResponse('https://conduit-api.bondaracademy.com/api/articles/');
+  const articleResponseBody = await articleResponse.json();
+  console.log('Article Response Body:', articleResponseBody);
+  const slugId = articleResponseBody.article.slug; // Log the response body to see its structure
+  console.log('slugId:', slugId); // Log the response body to see its structure
+
+  // Check that the article is published
+  await expect(page.locator('.article-page h1')).toContainText('Playwright is awesome');
+
+ 
+  // Preparing everything to delete artickle
+  // Login to get the token for deleting the article           
+  const response = await request.post('https://conduit-api.bondaracademy.com/api/users/login', {
+    data: {
+      user: {
+        email: 'bane1manojlovic@gmail.com',
+        password: 'Test123!'
+      }
+    }
+  });
+  const responseBody = await response.json();
+  console.log('Response Body:', responseBody); // Log the response body to see its structure
+  const accessToken = responseBody.user.token;
+
+  // Making API request to delete artickle
+  // https://conduit-api.bondaracademy.com/api/articles/Playwright-is-awesome-58435
+  const deleteArticleResponse = await request.delete(`https://conduit-api.bondaracademy.com/api/articles/${slugId}`, {
+    headers: {
+      Authorization: `Token ${accessToken}`
+    }
+  })
+  expect(deleteArticleResponse.status()).toEqual(204);
+});
