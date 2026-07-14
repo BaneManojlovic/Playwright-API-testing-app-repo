@@ -62,6 +62,14 @@ export default defineConfig({
       use: { ...devices['Desktop Safari'], storageState: '.auth/user.json' },
       dependencies: ['setup']
     },
+    {
+      name: 'mobile',
+      testMatch: 'testMobile.spec.ts',
+      use: { 
+        ...devices['iPhone 12'], 
+        storageState: '.auth/user.json' 
+      },
+    },
 
     /* Test against mobile viewports. */
     // {
