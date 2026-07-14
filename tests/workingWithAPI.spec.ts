@@ -4,36 +4,38 @@ import tagsData from '../test-data/tags.json';
 test.beforeEach(async ({ page }) => {
   // Mocking the API response for the GET request to /api/tags
   await page.route('https://conduit-api.bondaracademy.com/api/tags', async route => {
-    await route.fulfill({ 
-      body: JSON.stringify(tagsData), 
+    await route.fulfill({
+      body: JSON.stringify(tagsData),
     });
   });
 
- 
-
+  // Navigating to the application URL
   await page.goto('https://conduit.bondaracademy.com/');
 
-
-// Login to the application before each test
+  // Login to the application before each test
   await page.getByText('Sign in').click();
   await page.getByRole('textbox', { name: 'Email' }).fill('bane1manojlovic@gmail.com');
   await page.getByRole('textbox', { name: 'Password' }).fill('Test123!');
-  await page.getByRole('button', { name: 'Sign in' }).click();  
+  await page.getByRole('button', { name: 'Sign in' }).click();
 
 });
 
+test.afterEach(async ({ page }) => {
+  await page.unrouteAll({ behavior: 'ignoreErrors' });
+});
+
 test('has title', async ({ page }) => {
- // Modifing API response for the GET request to /api/articles?limit=10&offset=0
+  // Modifing API response for the GET request to /api/articles?limit=10&offset=0
   await page.route('https://conduit-api.bondaracademy.com/api/articles?limit=10&offset=0', async route => {
-      const response = await route.fetch()
-      const responseBody = await response.json();
-      // Taking properties that we want to modify
-      responseBody.articles[0].title = 'This is a Mock test title';
-      responseBody.articles[0].description = 'This is a Mock test description';
-      // Finishing the request with modified response
-      await route.fulfill({
-        body: JSON.stringify(responseBody),
-      });
+    const response = await route.fetch();
+    const responseBody = await response.json();
+    // Taking properties that we want to modify
+    responseBody.articles[0].title = 'This is a Mock test title';
+    responseBody.articles[0].description = 'This is a Mock test description';
+    // Finishing the request with modified response
+    await route.fulfill({
+      body: JSON.stringify(responseBody),
+    });
 
   });
 
@@ -80,7 +82,7 @@ test('delete article', async ({ page, request }) => {
   await page.getByText('Global Feed').click();
   await page.getByText('This is a test title').click();
   await page.getByRole('button', { name: 'Delete Article' }).first().click();
-  await page.getByText('Global Feed').click();  
+  await page.getByText('Global Feed').click();
 
   // Verify that the article is deleted by checking that it no longer appears in the list
   await expect(page.locator('app-article-list h1').first()).not.toContainText('This is a test title');
