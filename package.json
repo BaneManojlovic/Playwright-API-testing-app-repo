@@ -1,0 +1,23 @@
+{
+  "name": "playwright-api-testing-app-repo",
+  "version": "1.0.0",
+  "description": "This is repo for testing Playwright test web app",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BaneManojlovic/Playwright-API-testing-app-repo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/BaneManojlovic/Playwright-API-testing-app-repo/issues"
+  },
+  "homepage": "https://github.com/BaneManojlovic/Playwright-API-testing-app-repo#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.61.1",
+    "@types/node": "^26.1.1"
+  }
+}
